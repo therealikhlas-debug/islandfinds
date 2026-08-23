@@ -25,6 +25,7 @@ const isAuthenticated = localStorage.getItem('islandfinds-auth') === 'true';
 const isAdmin = localStorage.getItem('islandfinds-role') === 'admin';
 document.querySelector('#profileWrap').hidden = !isAuthenticated;
 document.querySelector('#loginHeaderLink').hidden = isAuthenticated;
+document.querySelector('#messagesHeaderLink').hidden = !isAuthenticated;
 document.querySelector('.admin-badge').hidden = !isAdmin;
 document.querySelector('.profile-name').textContent = 'Neoo';
 document.querySelector('#profileMenu strong').textContent = 'Hi, Neoo';
@@ -168,7 +169,15 @@ function openDetails(title) {
 }
 document.querySelector('#closeDetail').addEventListener('click', () => { detailBackdrop.hidden = true; });
 detailBackdrop.addEventListener('click', (event) => { if (event.target === detailBackdrop) detailBackdrop.hidden = true; });
-document.querySelector('#contactSeller').addEventListener('click', () => { detailBackdrop.hidden = true; showToast('Seller messaging will open after you log in.'); });
+document.querySelector('#contactSeller').addEventListener('click', () => {
+  if (!isAuthenticated) { window.location.href = 'login.html'; return; }
+  const title = document.querySelector('#detailTitle').textContent;
+  const listing = listings.find((item) => item.title === title);
+  const messages = JSON.parse(localStorage.getItem('islandfinds-messages') || '[]');
+  if (listing && !messages.some((message) => message.listing === listing.title)) messages.unshift({listing:listing.title, seller:'Island seller', preview:'Hi! I am interested in this listing.', time:'Just now'});
+  localStorage.setItem('islandfinds-messages', JSON.stringify(messages));
+  window.location.href = `messages.html?listing=${encodeURIComponent(title)}`;
+});
 
 let toastTimer;
 function showToast(message) { const toast = document.querySelector('#toast'); toast.textContent = message; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 2500); }
