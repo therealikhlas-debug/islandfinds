@@ -21,6 +21,8 @@ const isAdmin = localStorage.getItem('islandfinds-role') === 'admin';
 document.querySelector('#profileWrap').hidden = !isAuthenticated;
 document.querySelector('#loginHeaderLink').hidden = isAuthenticated;
 document.querySelector('.admin-badge').hidden = !isAdmin;
+document.querySelector('.profile-name').textContent = 'Neoo';
+document.querySelector('#profileMenu strong').textContent = 'Hi, Neoo';
 const themeToggle = document.querySelector('#themeToggle');
 const savedTheme = localStorage.getItem('islandfinds-theme');
 if (savedTheme === 'dark') document.body.classList.add('dark-mode');
@@ -102,6 +104,19 @@ listingGrid.addEventListener('keydown', (event) => {
 });
 
 const backdrop = document.querySelector('#modalBackdrop');
+const adForm = document.querySelector('#adForm');
+const publishButton = adForm.querySelector('.submit-button');
+const photoLabel = document.createElement('label');
+photoLabel.innerHTML = 'Picture <input id="adImage" type="file" accept="image/*" required><img class="photo-preview" alt="Selected picture preview" hidden>';
+adForm.insertBefore(photoLabel, publishButton);
+const photoInput = document.querySelector('#adImage');
+const photoPreview = document.querySelector('.photo-preview');
+photoInput.addEventListener('change', () => {
+  const selectedFile = photoInput.files[0];
+  if (!selectedFile) return;
+  photoPreview.src = URL.createObjectURL(selectedFile);
+  photoPreview.hidden = false;
+});
 const openModal = () => { backdrop.hidden = false; document.querySelector('#adTitle').focus(); };
 document.querySelector('#openModal').addEventListener('click', openModal);
 document.querySelector('#closeModal').addEventListener('click', () => { backdrop.hidden = true; });
@@ -112,7 +127,8 @@ document.querySelector('#adForm').addEventListener('submit', (event) => {
   const price = Number(document.querySelector('#adPrice').value);
   const category = document.querySelector('#adCategory').value;
   const location = document.querySelector('#adLocation').value;
-  listings.unshift({title, price, category, location, time:'just now', condition:'New listing', description:'A fresh listing from your island community. Message the seller to learn more and arrange a viewing.', image:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=700&q=80'});
+  const image = URL.createObjectURL(photoInput.files[0]);
+  listings.unshift({title, price, category, location, time:'just now', condition:'New listing', description:'A fresh listing from your island community. Message the seller to learn more and arrange a viewing.', image});
   activeListingCount += 1;
   localStorage.setItem('islandfinds-active-listings', activeListingCount);
   document.querySelector('#activeListingCount').textContent = activeListingCount;

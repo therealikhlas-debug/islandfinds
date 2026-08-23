@@ -13,6 +13,7 @@ const rows = document.querySelector('#adminRows');
 const empty = document.querySelector('#adminEmpty');
 const search = document.querySelector('#adminSearch');
 const filter = document.querySelector('#adminFilter');
+document.querySelector('#logoutAdmin').textContent = 'AS Neoo';
 document.querySelector('.stats-grid .stat-card strong').textContent = localStorage.getItem('islandfinds-active-listings') || '0';
 
 function renderAdminRows() {
