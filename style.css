@@ -1,3 +1,4 @@
+.theme-toggle{order:10}
 .theme-toggle{border:0;border-radius:0;background:transparent}.theme-toggle:hover{background:transparent;color:var(--orange)}
 .dark-mode .condition{color:#162522}
 .topbar{max-width:none;margin:0;padding-left:18px;padding-right:18px}.brand{margin-right:auto}
