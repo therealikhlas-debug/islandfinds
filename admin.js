@@ -13,6 +13,7 @@ const rows = document.querySelector('#adminRows');
 const empty = document.querySelector('#adminEmpty');
 const search = document.querySelector('#adminSearch');
 const filter = document.querySelector('#adminFilter');
+document.querySelector('.stats-grid .stat-card strong').textContent = localStorage.getItem('islandfinds-active-listings') || '0';
 
 function renderAdminRows() {
   const query = search.value.toLowerCase().trim();
@@ -21,6 +22,7 @@ function renderAdminRows() {
     return matchesQuery && (filter.value === 'all' || listing.status === filter.value);
   });
   rows.innerHTML = visible.map((listing) => `<tr><td><strong>${listing.title}</strong><small>Posted recently</small></td><td>${listing.seller}</td><td>${listing.location}</td><td>₹${listing.price.toLocaleString('en-IN')}</td><td><span class="status-pill ${listing.status}">${listing.status}</span></td><td><button class="table-action" data-title="${listing.title}" data-action="${listing.status === 'pending' ? 'approve' : 'remove'}">${listing.status === 'pending' ? 'Approve' : 'Remove'}</button></td></tr>`).join('');
+  document.querySelector('#pendingCount').textContent = adminListings.filter((item) => item.status === 'pending').length;
   empty.hidden = visible.length > 0;
 }
 

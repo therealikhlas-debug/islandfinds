@@ -14,6 +14,8 @@ const locationFilter = document.querySelector('#locationFilter');
 const sortSelect = document.querySelector('#sortSelect');
 let activeCategory = 'All';
 let savedTitles = new Set();
+let activeListingCount = Number(localStorage.getItem('islandfinds-active-listings') || 0);
+document.querySelector('#activeListingCount').textContent = activeListingCount;
 const isAuthenticated = localStorage.getItem('islandfinds-auth') === 'true';
 const isAdmin = localStorage.getItem('islandfinds-role') === 'admin';
 document.querySelector('#profileWrap').hidden = !isAuthenticated;
@@ -77,9 +79,7 @@ document.querySelector('#logoutLink').addEventListener('click', () => {
   localStorage.removeItem('islandfinds-role');
 });
 document.querySelector('#adminLink').addEventListener('click', (event) => {
-  event.preventDefault();
   document.querySelector('#profileMenu').classList.remove('visible');
-  showToast('Admin dashboard is ready for managing listings and members.');
 });
 listingGrid.addEventListener('click', (event) => {
   const saveButton = event.target.closest('[data-save]');
@@ -113,6 +113,9 @@ document.querySelector('#adForm').addEventListener('submit', (event) => {
   const category = document.querySelector('#adCategory').value;
   const location = document.querySelector('#adLocation').value;
   listings.unshift({title, price, category, location, time:'just now', condition:'New listing', description:'A fresh listing from your island community. Message the seller to learn more and arrange a viewing.', image:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=700&q=80'});
+  activeListingCount += 1;
+  localStorage.setItem('islandfinds-active-listings', activeListingCount);
+  document.querySelector('#activeListingCount').textContent = activeListingCount;
   backdrop.hidden = true;
   event.target.reset();
   activeCategory = 'All';
