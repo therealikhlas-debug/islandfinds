@@ -67,6 +67,9 @@ document.querySelector('#profileButton').addEventListener('click', () => {
   const isOpen = profileMenu.classList.toggle('visible');
   profileButton.setAttribute('aria-expanded', isOpen);
 });
+document.querySelector('#logoutLink').addEventListener('click', () => {
+  localStorage.removeItem('islandfinds-auth');
+});
 listingGrid.addEventListener('click', (event) => {
   const saveButton = event.target.closest('[data-save]');
   if (!saveButton) return;
