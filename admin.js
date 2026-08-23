@@ -13,6 +13,8 @@ const rows = document.querySelector('#adminRows');
 const empty = document.querySelector('#adminEmpty');
 const search = document.querySelector('#adminSearch');
 const filter = document.querySelector('#adminFilter');
+const submittedListings = JSON.parse(localStorage.getItem('islandfinds-pending-listings') || '[]');
+submittedListings.forEach((listing) => adminListings.unshift({ ...listing, seller:'Neoo', status:'pending' }));
 document.querySelector('#logoutAdmin').textContent = 'AS Neoo';
 document.querySelector('.admin-heading h1').textContent = 'Good morning, Neoo.';
 document.title = 'Admin dashboard | Neoo | IslandFinds';
@@ -40,6 +42,16 @@ rows.addEventListener('click', (event) => {
   const listing = adminListings.find((item) => item.title === actionButton.dataset.title);
   if (actionButton.dataset.action === 'approve') {
     listing.status = 'approved';
+    const pendingIndex = submittedListings.findIndex((item) => item.title === listing.title);
+    if (pendingIndex !== -1) {
+      const approvedListings = JSON.parse(localStorage.getItem('islandfinds-approved-listings') || '[]');
+      approvedListings.unshift(submittedListings[pendingIndex]);
+      localStorage.setItem('islandfinds-approved-listings', JSON.stringify(approvedListings));
+      const activeCount = Number(localStorage.getItem('islandfinds-active-listings') || 0) + 1;
+      localStorage.setItem('islandfinds-active-listings', activeCount);
+      submittedListings.splice(pendingIndex, 1);
+      localStorage.setItem('islandfinds-pending-listings', JSON.stringify(submittedListings));
+    }
     showToast(`${listing.title} approved`);
   } else {
     adminListings.splice(adminListings.indexOf(listing), 1);

@@ -6,6 +6,8 @@ const listings = [
   {title:'GoPro Hero 10 + accessories',price:25500,category:'Electronics',location:'Minicoy',time:'3 hrs ago',condition:'Like new',description:'GoPro Hero 10 with waterproof case, spare battery, and a compact grip. Great for documenting island days.',image:'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=700&q=80'},
   {title:'Home-cooked island lunch',price:180,category:'Services',location:'Andrott',time:'5 hrs ago',condition:'Fresh today',description:'A filling home-cooked lunch prepared fresh today. Pickup near the main market, with limited portions.',image:'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=700&q=80'}
 ];
+const approvedListings = JSON.parse(localStorage.getItem('islandfinds-approved-listings') || '[]');
+approvedListings.forEach((listing) => listings.unshift(listing));
 
 const listingGrid = document.querySelector('#listingGrid');
 const emptyState = document.querySelector('#emptyState');
@@ -14,6 +16,7 @@ const locationFilter = document.querySelector('#locationFilter');
 const sortSelect = document.querySelector('#sortSelect');
 let activeCategory = 'All';
 let savedTitles = new Set();
+const pendingListings = JSON.parse(localStorage.getItem('islandfinds-pending-listings') || '[]');
 let activeListingCount = Number(localStorage.getItem('islandfinds-active-listings') || 0);
 document.querySelector('#activeListingCount').textContent = activeListingCount;
 const pageVisits = Number(localStorage.getItem('islandfinds-page-visits') || 0) + 1;
@@ -123,24 +126,30 @@ const openModal = () => { backdrop.hidden = false; document.querySelector('#adTi
 document.querySelector('#openModal').addEventListener('click', openModal);
 document.querySelector('#closeModal').addEventListener('click', () => { backdrop.hidden = true; });
 backdrop.addEventListener('click', (event) => { if (event.target === backdrop) backdrop.hidden = true; });
-document.querySelector('#adForm').addEventListener('submit', (event) => {
+function readImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+document.querySelector('#adForm').addEventListener('submit', async (event) => {
   event.preventDefault();
   const title = document.querySelector('#adTitle').value.trim();
   const price = Number(document.querySelector('#adPrice').value);
   const category = document.querySelector('#adCategory').value;
   const location = document.querySelector('#adLocation').value;
-  const image = URL.createObjectURL(photoInput.files[0]);
-  listings.unshift({title, price, category, location, time:'just now', condition:'New listing', description:'A fresh listing from your island community. Message the seller to learn more and arrange a viewing.', image});
-  activeListingCount += 1;
-  localStorage.setItem('islandfinds-active-listings', activeListingCount);
-  document.querySelector('#activeListingCount').textContent = activeListingCount;
+  const image = await readImage(photoInput.files[0]);
+  pendingListings.unshift({title, price, category, location, time:'just now', condition:'Pending review', description:'A fresh listing from your island community. Message the seller to learn more and arrange a viewing.', image});
+  localStorage.setItem('islandfinds-pending-listings', JSON.stringify(pendingListings));
   backdrop.hidden = true;
   event.target.reset();
   activeCategory = 'All';
   document.querySelector('.category-tab.active').classList.remove('active');
   document.querySelector('[data-category="All"]').classList.add('active');
   renderListings();
-  showToast('Your listing is live in the community');
+  showToast('Your listing was sent for admin approval');
 });
 
 const detailBackdrop = document.querySelector('#detailBackdrop');
