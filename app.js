@@ -15,8 +15,10 @@ const sortSelect = document.querySelector('#sortSelect');
 let activeCategory = 'All';
 let savedTitles = new Set();
 const isAuthenticated = localStorage.getItem('islandfinds-auth') === 'true';
+const isAdmin = localStorage.getItem('islandfinds-role') === 'admin';
 document.querySelector('#profileWrap').hidden = !isAuthenticated;
 document.querySelector('#loginHeaderLink').hidden = isAuthenticated;
+document.querySelector('.admin-badge').hidden = !isAdmin;
 const themeToggle = document.querySelector('#themeToggle');
 const savedTheme = localStorage.getItem('islandfinds-theme');
 if (savedTheme === 'dark') document.body.classList.add('dark-mode');
@@ -72,6 +74,12 @@ document.querySelector('#profileButton').addEventListener('click', () => {
 });
 document.querySelector('#logoutLink').addEventListener('click', () => {
   localStorage.removeItem('islandfinds-auth');
+  localStorage.removeItem('islandfinds-role');
+});
+document.querySelector('#adminLink').addEventListener('click', (event) => {
+  event.preventDefault();
+  document.querySelector('#profileMenu').classList.remove('visible');
+  showToast('Admin dashboard is ready for managing listings and members.');
 });
 listingGrid.addEventListener('click', (event) => {
   const saveButton = event.target.closest('[data-save]');

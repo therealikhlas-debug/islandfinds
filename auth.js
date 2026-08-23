@@ -10,6 +10,7 @@ function showAuthMessage(message) {
 loginForm?.addEventListener('submit', (event) => {
   event.preventDefault();
   localStorage.setItem('islandfinds-auth', 'true');
+  localStorage.setItem('islandfinds-role', 'admin');
   showAuthMessage('Welcome back. Taking you to the marketplace...');
   setTimeout(() => { window.location.href = 'index.html'; }, 900);
 });
@@ -17,6 +18,7 @@ loginForm?.addEventListener('submit', (event) => {
 signinForm?.addEventListener('submit', (event) => {
   event.preventDefault();
   localStorage.setItem('islandfinds-auth', 'true');
+  localStorage.setItem('islandfinds-role', 'admin');
   showAuthMessage('Account created. Welcome to the islands!');
   setTimeout(() => { window.location.href = 'index.html'; }, 900);
 });
