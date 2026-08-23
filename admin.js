@@ -15,6 +15,10 @@ const search = document.querySelector('#adminSearch');
 const filter = document.querySelector('#adminFilter');
 document.querySelector('#logoutAdmin').textContent = 'AS Neoo';
 document.querySelector('.stats-grid .stat-card strong').textContent = localStorage.getItem('islandfinds-active-listings') || '0';
+const visitsCard = document.querySelectorAll('.stats-grid .stat-card')[1];
+visitsCard.querySelector('.stat-label').textContent = 'Page visits';
+visitsCard.querySelector('strong').textContent = localStorage.getItem('islandfinds-page-visits') || '0';
+visitsCard.querySelector('small').textContent = 'Since launch';
 
 function renderAdminRows() {
   const query = search.value.toLowerCase().trim();

@@ -16,6 +16,8 @@ let activeCategory = 'All';
 let savedTitles = new Set();
 let activeListingCount = Number(localStorage.getItem('islandfinds-active-listings') || 0);
 document.querySelector('#activeListingCount').textContent = activeListingCount;
+const pageVisits = Number(localStorage.getItem('islandfinds-page-visits') || 0) + 1;
+localStorage.setItem('islandfinds-page-visits', pageVisits);
 const isAuthenticated = localStorage.getItem('islandfinds-auth') === 'true';
 const isAdmin = localStorage.getItem('islandfinds-role') === 'admin';
 document.querySelector('#profileWrap').hidden = !isAuthenticated;
