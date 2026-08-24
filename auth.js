@@ -11,10 +11,11 @@ function showAuthMessage(message) {
 
 loginForm?.addEventListener('submit', (event) => {
   event.preventDefault();
-  const email = document.querySelector('#loginForm input[type="text"], #loginForm input:not([type])').value.trim().toLowerCase();
-  const password = document.querySelector('#loginForm input[type="password"]').value;
+  const fields = loginForm.querySelectorAll('input');
+  const email = fields[0].value.trim().toLowerCase();
+  const password = fields[1].value;
   if (email !== adminEmail || password !== adminPassword) {
-    showAuthMessage('Only the admin email and password can access this account.');
+    showAuthMessage('Incorrect admin email or password.');
     return;
   }
   localStorage.setItem('islandfinds-auth', 'true');
