@@ -1,10 +1,10 @@
 const listings = [
-  {title:'Honda Activa 5G',price:54000,category:'Vehicles',location:'Kavaratti',time:'12 min ago',condition:'Good',description:'Reliable daily ride with smooth handling and plenty of life left in it. Available for a quick local viewing.',image:'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=700&q=80'},
-  {title:'Wooden canoe, handmade',price:8500,category:'Vehicles',location:'Agatti',time:'34 min ago',condition:'Like new',description:'Hand-built from sturdy local wood. Light enough for easy launching and ready for calm lagoon trips.',image:'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=700&q=80'},
-  {title:'iPhone 13 • 128 GB',price:32000,category:'Electronics',location:'Kavaratti',time:'1 hr ago',condition:'Excellent',description:'Unlocked 128 GB iPhone 13 in excellent condition, with a healthy battery and original charging cable.',image:'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=700&q=80'},
-  {title:'Rattan lounge chair pair',price:6800,category:'Home',location:'Bangaram',time:'2 hrs ago',condition:'Good',description:'A breezy pair of woven rattan chairs that bring a little lagoon-side calm to any verandah.',image:'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=700&q=80'},
-  {title:'GoPro Hero 10 + accessories',price:25500,category:'Electronics',location:'Minicoy',time:'3 hrs ago',condition:'Like new',description:'GoPro Hero 10 with waterproof case, spare battery, and a compact grip. Great for documenting island days.',image:'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=700&q=80'},
-  {title:'Home-cooked island lunch',price:180,category:'Services',location:'Andrott',time:'5 hrs ago',condition:'Fresh today',description:'A filling home-cooked lunch prepared fresh today. Pickup near the main market, with limited portions.',image:'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=700&q=80'}
+  {title:'Honda Activa 5G',price:54000,category:'Vehicles',location:'Kavaratti',createdAt:Date.now()-12*60000,condition:'Good',description:'Reliable daily ride with smooth handling and plenty of life left in it. Available for a quick local viewing.',image:'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=700&q=80'},
+  {title:'Wooden canoe, handmade',price:8500,category:'Vehicles',location:'Agatti',createdAt:Date.now()-34*60000,condition:'Like new',description:'Hand-built from sturdy local wood. Light enough for easy launching and ready for calm lagoon trips.',image:'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=700&q=80'},
+  {title:'iPhone 13 • 128 GB',price:32000,category:'Electronics',location:'Kavaratti',createdAt:Date.now()-60*60000,condition:'Excellent',description:'Unlocked 128 GB iPhone 13 in excellent condition, with a healthy battery and original charging cable.',image:'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=700&q=80'},
+  {title:'Rattan lounge chair pair',price:6800,category:'Home',location:'Bangaram',createdAt:Date.now()-2*60*60000,condition:'Good',description:'A breezy pair of woven rattan chairs that bring a little lagoon-side calm to any verandah.',image:'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=700&q=80'},
+  {title:'GoPro Hero 10 + accessories',price:25500,category:'Electronics',location:'Minicoy',createdAt:Date.now()-3*60*60000,condition:'Like new',description:'GoPro Hero 10 with waterproof case, spare battery, and a compact grip. Great for documenting island days.',image:'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=700&q=80'},
+  {title:'Home-cooked island lunch',price:180,category:'Services',location:'Andrott',createdAt:Date.now()-5*60*60000,condition:'Fresh today',description:'A filling home-cooked lunch prepared fresh today. Pickup near the main market, with limited portions.',image:'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=700&q=80'}
 ];
 
 const listingGrid = document.querySelector('#listingGrid');
@@ -12,6 +12,9 @@ const emptyState = document.querySelector('#emptyState');
 const searchInput = document.querySelector('#searchInput');
 const locationFilter = document.querySelector('#locationFilter');
 const sortSelect = document.querySelector('#sortSelect');
+const formatTime = (timestamp) => { const minutes = Math.max(0, Math.floor((Date.now() - (timestamp || Date.now())) / 60000)); return minutes < 1 ? 'just now' : minutes < 60 ? `${minutes} min ago` : minutes < 1440 ? `${Math.floor(minutes / 60)} hr ago` : `${Math.floor(minutes / 1440)} days ago`; };
+document.querySelector('#activeListingCount').textContent = listings.length;
+localStorage.setItem('islandfinds-active-listings', listings.length);
 let activeCategory = 'All';
 let savedTitles = new Set();
 const isAuthenticated = localStorage.getItem('islandfinds-auth') === 'true';
@@ -52,7 +55,7 @@ function renderListings() {
   listingGrid.innerHTML = visible.map((listing) => `
     <article class="listing-card" tabindex="0" role="button" data-title="${listing.title}" aria-label="View details for ${listing.title}">
       <div class="listing-image"><img src="${listing.image}" alt="${listing.title}" loading="lazy"><button class="save-button ${savedTitles.has(listing.title) ? 'saved' : ''}" data-save="${listing.title}" aria-label="Save ${listing.title}">${savedTitles.has(listing.title) ? '♥' : '♡'}</button><span class="condition">${listing.condition}</span></div>
-      <div class="listing-info"><div class="listing-title" title="${listing.title}">${listing.title}</div><div class="listing-price">₹${listing.price.toLocaleString('en-IN')}</div><div class="listing-location"><span>⌖ ${listing.location}</span><span>${listing.time}</span></div></div>
+              <div class="listing-info"><div class="listing-title" title="${listing.title}">${listing.title}</div><div class="listing-price">₹${listing.price.toLocaleString('en-IN')}</div><div class="listing-location"><span>⌖ ${listing.location}</span><span>${formatTime(listing.createdAt)}</span></div></div>
     </article>`).join('');
   emptyState.hidden = visible.length > 0;
 }
@@ -108,7 +111,7 @@ document.querySelector('#adForm').addEventListener('submit', (event) => {
   const price = Number(document.querySelector('#adPrice').value);
   const category = document.querySelector('#adCategory').value;
   const location = document.querySelector('#adLocation').value;
-  listings.unshift({title, price, category, location, time:'just now', condition:'New listing', description:'A fresh listing from your island community. Message the seller to learn more and arrange a viewing.', image:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=700&q=80'});
+  listings.unshift({title, price, category, location, createdAt:Date.now(), condition:'New listing', description:'A fresh listing from your island community. Message the seller to learn more and arrange a viewing.', image:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=700&q=80'});
   backdrop.hidden = true;
   event.target.reset();
   activeCategory = 'All';
@@ -129,7 +132,7 @@ function openDetails(title) {
   document.querySelector('#detailPrice').textContent = `₹${listing.price.toLocaleString('en-IN')}`;
   document.querySelector('#detailDescription').textContent = listing.description;
   document.querySelector('#detailLocation').textContent = `⌖ ${listing.location}`;
-  document.querySelector('#detailTime').textContent = listing.time;
+  document.querySelector('#detailTime').textContent = formatTime(listing.createdAt);
   detailBackdrop.hidden = false;
 }
 document.querySelector('#closeDetail').addEventListener('click', () => { detailBackdrop.hidden = true; });

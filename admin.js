@@ -13,6 +13,7 @@ const search = document.querySelector('#adminSearch');
 const filter = document.querySelector('#adminFilter');
 const toast = document.querySelector('#adminToast');
 const pendingListings = JSON.parse(localStorage.getItem('islandfinds-pending-listings') || '[]');
+const formatTime = (timestamp) => { const minutes = Math.max(0, Math.floor((Date.now() - (timestamp || Date.now())) / 60000)); return minutes < 1 ? 'just now' : minutes < 60 ? `${minutes} min ago` : minutes < 1440 ? `${Math.floor(minutes / 60)} hr ago` : `${Math.floor(minutes / 1440)} days ago`; };
 pendingListings.forEach((listing) => adminListings.unshift({...listing, seller:'Community member', status:'pending'}));
 document.querySelector('#activeCount').textContent = localStorage.getItem('islandfinds-active-listings') || '0';
 document.querySelector('#visitCount').textContent = localStorage.getItem('islandfinds-page-visits') || '0';
@@ -20,7 +21,7 @@ function showToast(message) { toast.textContent = message; toast.classList.add('
 function renderRows() {
   const query = search.value.toLowerCase().trim();
   const visible = adminListings.filter((listing) => `${listing.title} ${listing.seller} ${listing.location}`.toLowerCase().includes(query) && (filter.value === 'all' || listing.status === filter.value));
-  rows.innerHTML = visible.map((listing) => `<tr><td><div class="admin-listing"><img src="${listing.image}" alt="${listing.title}"><span><strong>${listing.title}</strong><small>Posted recently</small></span></div></td><td>${listing.seller}</td><td>${listing.location}</td><td>₹${listing.price.toLocaleString('en-IN')}</td><td><span class="status-pill ${listing.status}">${listing.status}</span></td><td><button class="table-action" data-title="${listing.title}" data-action="${listing.status === 'pending' ? 'approve' : 'remove'}">${listing.status === 'pending' ? 'Approve' : 'Remove'}</button></td></tr>`).join('');
+  rows.innerHTML = visible.map((listing) => `<tr><td><div class="admin-listing"><img src="${listing.image}" alt="${listing.title}"><span><strong>${listing.title}</strong><small>${listing.createdAt ? formatTime(listing.createdAt) : 'Recently listed'}</small></span></div></td><td>${listing.seller}</td><td>${listing.location}</td><td>₹${listing.price.toLocaleString('en-IN')}</td><td><span class="status-pill ${listing.status}">${listing.status}</span></td><td><button class="table-action" data-title="${listing.title}" data-action="${listing.status === 'pending' ? 'approve' : 'remove'}">${listing.status === 'pending' ? 'Approve' : 'Remove'}</button></td></tr>`).join('');
   document.querySelector('#pendingCount').textContent = adminListings.filter((listing) => listing.status === 'pending').length;
   empty.hidden = visible.length > 0;
 }
